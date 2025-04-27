@@ -1,5 +1,10 @@
 {
     "Lua.diagnostics.globals": [
-        "peripheral"
+        "peripheral",
+        "color",
+        "colors"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-field"
     ]
 }
