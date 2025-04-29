@@ -66,7 +66,7 @@ async function getBalance(req: Request): Promise<Response> {
     const balance = await getBalanceFromAccount(accountName);
 
     if (balance === "Not found") {
-        return new Response("Accunt not found", {status:404});
+        return new Response("Account not found", {status:404});
     }
 
     return new Response(JSON.stringify({balance:balance}), {
@@ -77,9 +77,33 @@ async function getBalance(req: Request): Promise<Response> {
 }
 
 async function doTransaction(trans: Transaction): Promise<"Success" | "Fail"> {
-    const result = kv.set(["transactions", trans.ulid], trans);
-    // TODO
+    const [fromRes, toRes] = await Promise.all([
+        kv.get<Account>(["accounts", trans.fromAccountName]),
+        kv.get<Account>(["accounts", trans.toAccountName])
+    ]);
 
+    if (fromRes.value === null || toRes.value === null) {
+        return "Fail";
+    }
+
+    const atomic = kv.atomic()
+        .check(fromRes)
+        .check(toRes)
+        .set(["transactions", trans.ulid], trans)
+        .set(["accounts", trans.fromAccountName], {
+            ...fromRes.value,
+            balance: fromRes.value.balance - trans.amount
+        })
+        .set(["accounts", trans.toAccountName], {
+            ...toRes.value,
+            balance: toRes.value.balance + trans.amount
+        });
+
+    const commit = await atomic.commit();
+    
+    if (!commit.ok) {
+        return "Fail";
+    }
 
     return "Success";
 }
@@ -156,6 +180,8 @@ Deno.serve((req) => {
         return getBalance(req);
     } else if (url.pathname === "/api/makeTransaction" && req.method === "POST") {
         return makeTransaction(req);
+    } else if (url.pathname === "/api/printMoney" && req.method === "POST") {
+        
     }
 
     return new Response("Not found", {status:404});
