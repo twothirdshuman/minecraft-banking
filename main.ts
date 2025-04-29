@@ -1,7 +1,10 @@
 import { ulid } from "jsr:@std/ulid";
+import { verify } from "jsr:@bronti/argon2";
+
+const BANK_PASS = "$argon2id$v=19$m=19456,t=2,p=1$Z0HBvINt0WAMvtmUmICkzw$II046EPc50AQPiBPlRlTcmyiPoFTKPMz82RLtKEhP7c";
 
 // kv Key ["accounts", string] and ["transactions", string]
-const kv = Deno.openKv();
+const kv = await Deno.openKv();
 
 type Account = {
     pin: string,
@@ -158,15 +161,116 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response("Wrong pin", {status:401});
     }
     
-
-    await doTransaction({
+    const result = await doTransaction({
         fromAccountName: from,
         toAccountName: to,
         amount: amount,
         ulid: ulid()
     });
 
-    return new Response("Success");
+    if (result === "Fail") {
+        return new Response(null, {status:500});
+    }
+
+    return new Response("Successful transaction");
+}
+
+async function printMoney(req: Request): Promise<Response> {
+    let reqJson: unknown;
+    try {
+        reqJson = await req.json();
+    } catch (_) {
+        return new Response(null, {status:400});
+    }
+
+    if (typeof reqJson !== "object" || reqJson === null) {
+        return new Response(null, {status:400});
+    }
+
+    if (!('toAccountName' in reqJson)) {
+        return new Response(null, { status: 400 });
+    }
+
+    if (!('amount' in reqJson)) {
+        return new Response(null, { status: 400 });
+    }
+
+    if (!('pin' in reqJson)) {
+        return new Response(null, { status: 401 });
+    }
+
+    const to = reqJson?.toAccountName;
+    const pin = reqJson?.pin;
+    const amount = reqJson?.amount;
+
+    if (typeof to !== "string" || typeof pin !== "string" || typeof amount !== "number") {
+        return new Response(null, { status: 400 });
+    }
+
+    const verified = verify(pin, BANK_PASS);
+
+    if (!verified) {
+        return new Response(null, {status:401});
+    }
+
+    const result = await doTransaction({
+        fromAccountName: "Printer",
+        toAccountName: to,
+        amount: amount,
+        ulid: ulid()
+    });
+
+    if (result === "Fail") {
+        return new Response(null, {status:500});
+    }
+
+    return new Response("Printed money successfully", {status:200});
+}
+
+async function createAccount(req: Request): Promise<Response> {
+    let reqJson: unknown;
+    try {
+        reqJson = await req.json();
+    } catch (_) {
+        return new Response(null, {status:400});
+    }
+
+    if (typeof reqJson !== "object" || reqJson === null) {
+        return new Response(null, {status:400});
+    }
+
+    if (!('name' in reqJson)) {
+        return new Response(null, { status: 400 });
+    }
+
+    if (!('pin' in reqJson)) {
+        return new Response(null, { status: 401 });
+    }
+
+    const name = reqJson?.name;
+    const pin = reqJson?.pin;
+
+    if (typeof name !== "string" || typeof pin !== "string") {
+        return new Response(null, { status: 400 });
+    }
+
+    const verified = verify(pin, BANK_PASS);
+
+    if (!verified) {
+        return new Response(null, {status:401});
+    }
+
+    const result = await kv.set(["accounts", name], {
+        pin: "",
+        balance: 0,
+        name: name
+    });
+
+    if (!result.ok) {
+        return new Response(null, {status:500});
+    }
+
+    return new Response("Account created successfully");
 }
 
 Deno.serve((req) => {
@@ -181,7 +285,9 @@ Deno.serve((req) => {
     } else if (url.pathname === "/api/makeTransaction" && req.method === "POST") {
         return makeTransaction(req);
     } else if (url.pathname === "/api/printMoney" && req.method === "POST") {
-
+        return printMoney(req);
+    } else if (url.pathname === "/api/createAccount" && req.method === "POST") {
+        return createAccount(req);
     } else if(url.pathname === "/" && req.method === "GET") {
         return new Response("This is a website with just an api to keep track of money and transactions in a minecraft server me and some friends are on.");
     }
