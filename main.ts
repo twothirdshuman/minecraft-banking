@@ -157,8 +157,12 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response("Not enough funds", {status:400});
     }
 
-    if (amount <= 0 || Math.round(amount) !== amount) {
+    if (amount <= 0 || Math.round(amount) !== amount || !Number.isFinite(amount)) {
         return new Response("Invalid amount", {status:400});
+    }
+
+    if (from === to) {
+        return new Response("cannot transfer to self", {status:400});
     }
 
     if (account.pin !== pin) {
