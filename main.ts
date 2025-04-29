@@ -182,6 +182,8 @@ Deno.serve((req) => {
         return makeTransaction(req);
     } else if (url.pathname === "/api/printMoney" && req.method === "POST") {
 
+    } else if(url.pathname === "/" && req.method === "GET") {
+        return new Response("This is a website with just an api to keep track of money and transactions in a minecraft server me and some friends are on.");
     }
 
     return new Response("Not found", {status:404});
