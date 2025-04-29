@@ -1,7 +1,7 @@
 import { ulid } from "jsr:@std/ulid";
 
 // kv Key ["accounts", string] and ["transactions", string]
-const kv = new Deno.Kv();
+const kv = Deno.openKv();
 
 type Account = {
     pin: string,
@@ -181,7 +181,7 @@ Deno.serve((req) => {
     } else if (url.pathname === "/api/makeTransaction" && req.method === "POST") {
         return makeTransaction(req);
     } else if (url.pathname === "/api/printMoney" && req.method === "POST") {
-        
+
     }
 
     return new Response("Not found", {status:404});
