@@ -1,9 +1,13 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@bronti/argon2@*": "1.0.3",
     "jsr:@std/ulid@*": "1.0.0"
   },
   "jsr": {
+    "@bronti/argon2@1.0.3": {
+      "integrity": "ddd3614a701e18d41971ff7b6dcd5ced53db294ef81f7b3624e3f2f9fa175352"
+    },
     "@std/ulid@1.0.0": {
       "integrity": "d41c3d27a907714413649fee864b7cde8d42ee68437d22b79d5de4f81d808780"
     }

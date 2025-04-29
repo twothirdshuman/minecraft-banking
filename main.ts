@@ -1,7 +1,7 @@
 import { ulid } from "jsr:@std/ulid";
 import { verify } from "jsr:@bronti/argon2";
 
-const BANK_PASS = "$argon2id$v=19$m=19456,t=2,p=1$Z0HBvINt0WAMvtmUmICkzw$II046EPc50AQPiBPlRlTcmyiPoFTKPMz82RLtKEhP7c";
+const BANK_PASS = "$argon2id$v=19$m=19456,t=2,p=1$fB8uj8Te2pFcDElGQWLp+Q$ZAguWvCgVvXpiQHdkURROX+rJ5O/SF/RbeEgIV+1iKg";
 
 // kv Key ["accounts", string] and ["transactions", string]
 const kv = await Deno.openKv();
@@ -252,7 +252,7 @@ async function createAccount(req: Request): Promise<Response> {
     }
 
     if (!('pin' in reqJson)) {
-        return new Response(null, { status: 401 });
+        return new Response("No pin", { status: 401 });
     }
 
     const name = reqJson?.name;
@@ -265,7 +265,7 @@ async function createAccount(req: Request): Promise<Response> {
     const verified = verify(pin, BANK_PASS);
 
     if (!verified) {
-        return new Response(null, {status:401});
+        return new Response("Wrong pin", {status:401});
     }
 
     const existing = await kv.get(["accounts", name]);
