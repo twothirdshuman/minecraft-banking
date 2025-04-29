@@ -32,7 +32,7 @@ async function getAccounts(): Promise<Response> {
     }
 
     return new Response(JSON.stringify(ret), {
-        status: 501,
+        status: 200,
         headers: {
             "Content-Type": "application/json"
         }
@@ -157,6 +157,10 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response("Not enough funds", {status:400});
     }
 
+    if (amount <= 0 || Math.round(amount) !== amount) {
+        return new Response("Invalid amount", {status:400});
+    }
+
     if (account.pin !== pin) {
         return new Response("Wrong pin", {status:401});
     }
@@ -260,6 +264,11 @@ async function createAccount(req: Request): Promise<Response> {
         return new Response(null, {status:401});
     }
 
+    const existing = await kv.get(["accounts", name]);
+    if (existing.value !== null) {
+        return new Response("Account already exists", {status:409});
+    }
+
     const result = await kv.set(["accounts", name], {
         pin: "",
         balance: 0,
@@ -278,8 +287,6 @@ Deno.serve((req) => {
 
     if (url.pathname === "/api/getAccounts" && req.method === "GET") {
         return getAccounts();
-    } else if (url.pathname === "/api/createAccount" && req.method === "POST") {
-        return new Response("Not found", {status:404});
     } else if (url.pathname === "/api/getBalance" && req.method === "GET") {
         return getBalance(req);
     } else if (url.pathname === "/api/makeTransaction" && req.method === "POST") {
