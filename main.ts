@@ -59,6 +59,30 @@ async function getBalanceFromAccount(accountName: string): Promise<number | "Not
     return balance;
 }
 
+function takeOut<T extends string | number>(type: "string" | "number", name: string, from: unknown): T | undefined {
+    if (typeof from !== "object" || from === null) {
+        return undefined;
+    }
+
+    if (!(name in from)) {
+        return undefined;
+    }
+
+    const obj = from as Record<string, unknown>;
+
+    const thing = obj[name];
+    
+    if (type === "string" && typeof thing === "string") {
+        return thing as T;
+    }
+
+    if (type === "number" && typeof thing === "number") {
+        return thing as T;
+    }
+
+    return undefined;
+}
+
 async function getBalance(req: Request): Promise<Response> {
     const url = new URL(req.url);
     const accountName = url.searchParams.get("account");
@@ -119,32 +143,12 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response(null, {status:400});
     }
 
-    if (typeof reqJson !== "object" || reqJson === null) {
-        return new Response(null, {status:400});
-    }
+    const from = takeOut<string>("string", "fromAccountName", reqJson);
+    const to = takeOut<string>("string", "toAccountName", reqJson);
+    const pin = takeOut<string>("string", "pin", reqJson);
+    const amount = takeOut<number>("number", "amount", reqJson);
 
-    if (!('fromAccountName' in reqJson)) {
-        return new Response(null, { status: 400 });
-    }
-
-    if (!('toAccountName' in reqJson)) {
-        return new Response(null, { status: 400 });
-    }
-
-    if (!('amount' in reqJson)) {
-        return new Response(null, { status: 400 });
-    }
-
-    if (!('pin' in reqJson)) {
-        return new Response(null, { status: 401 });
-    }
-
-    const from = reqJson?.fromAccountName;
-    const to = reqJson?.toAccountName;
-    const pin = reqJson?.pin;
-    const amount = reqJson?.amount;
-
-    if (typeof from !== "string" || typeof to !== "string" || typeof pin !== "string" || typeof amount !== "number") {
+    if (from === undefined || to === undefined || pin === undefined || amount === undefined) {
         return new Response(null, { status: 400 });
     }
 
@@ -191,27 +195,11 @@ async function printMoney(req: Request): Promise<Response> {
         return new Response(null, {status:400});
     }
 
-    if (typeof reqJson !== "object" || reqJson === null) {
-        return new Response(null, {status:400});
-    }
+    const to = takeOut<string>("string", "toAccountName", reqJson);
+    const pin = takeOut<string>("string", "pin", reqJson);
+    const amount = takeOut<number>("number", "amount", reqJson);
 
-    if (!('toAccountName' in reqJson)) {
-        return new Response(null, { status: 400 });
-    }
-
-    if (!('amount' in reqJson)) {
-        return new Response(null, { status: 400 });
-    }
-
-    if (!('pin' in reqJson)) {
-        return new Response(null, { status: 401 });
-    }
-
-    const to = reqJson?.toAccountName;
-    const pin = reqJson?.pin;
-    const amount = reqJson?.amount;
-
-    if (typeof to !== "string" || typeof pin !== "string" || typeof amount !== "number") {
+    if (to === undefined || pin === undefined || amount === undefined) {
         return new Response(null, { status: 400 });
     }
 
@@ -243,20 +231,12 @@ async function createAccount(req: Request): Promise<Response> {
         return new Response(null, {status:400});
     }
 
-    if (typeof reqJson !== "object" || reqJson === null) {
-        return new Response(null, {status:400});
-    }
+    const name = takeOut<string>("string", "name", reqJson);
+    const pin = takeOut<string>("string", "pin", reqJson);
 
-    if (!('name' in reqJson)) {
+    if (pin === undefined || name === undefined) {
         return new Response(null, { status: 400 });
     }
-
-    if (!('pin' in reqJson)) {
-        return new Response("No pin", { status: 401 });
-    }
-
-    const name = reqJson?.name;
-    const pin = reqJson?.pin;
 
     if (typeof name !== "string" || typeof pin !== "string") {
         return new Response(null, { status: 400 });
