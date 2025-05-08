@@ -23,8 +23,9 @@
             document.getElementById("print").addEventListener("click", async () => {
                 const pin = document.getElementById("pin").value;
                 const to = document.getElementById("to").value;
+                const amount = Number(document.getElementById("amount").value);
 
-                const res = await fetch("https://minecraft-banking.deno.dev/api/printMoney", {method:"POST",body:JSON.stringify({toAccountName:to,pin:pin})});
+                const res = await fetch("https://minecraft-banking.deno.dev/api/printMoney", {method:"POST",body:JSON.stringify({toAccountName:to,pin:pin,amount:amount})});
 
                 alert(res.ok);
             });
