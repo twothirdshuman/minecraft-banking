@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>BANK</h1>
+    <input placeholder="pin" type="password" id="pin">
+    <input placeholder="name" id="name">
+    <input placeholder="toAccountName" id="to">
+    <input placeholder="amount" id="amount">
+    <button id="print">Print Money</button>
+    <button id="create">Create Account</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("print").addEventListener("click", async () => {
+                const pin = document.getElementById("pin").value;
+                const to = document.getElementById("to").value;
+
+                const res = await fetch("https://minecraft-banking.deno.dev/api/printMoney", {method:"POST",body:JSON.stringify({toAccountName:to,pin:pin})});
+
+                alert(res.ok);
+            });
+
+            document.getElementById("create").addEventListener("click", async () => {
+                const pin = document.getElementById("pin").value;
+                const name = document.getElementById("name").value;
+
+                const res = await fetch("https://minecraft-banking.deno.dev/api/createAccount", {method:"POST",body:JSON.stringify({name:name,pin:pin})});
+
+                alert(res.ok);
+            });
+        })
+    </script>
+</body>
+</html>

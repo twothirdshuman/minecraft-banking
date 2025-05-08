@@ -266,7 +266,7 @@ async function createAccount(req: Request): Promise<Response> {
     return new Response("Account created successfully");
 }
 
-Deno.serve((req) => {
+Deno.serve(async (req) => {
     const url = new URL(req.url);
 
     if (url.pathname === "/api/getAccounts" && req.method === "GET") {
@@ -280,7 +280,7 @@ Deno.serve((req) => {
     } else if (url.pathname === "/api/createAccount" && req.method === "POST") {
         return createAccount(req);
     } else if(url.pathname === "/" && req.method === "GET") {
-        return new Response("This is a website with just an api to keep track of money and transactions in a minecraft server me and some friends are on.");
+        return new Response(await Deno.readFile("./index.html"));
     }
 
     return new Response("Not found", {status:404});
