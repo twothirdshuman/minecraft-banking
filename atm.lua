@@ -123,16 +123,19 @@ local function main()
     
     if y == 1 then
 
-        local acc = nil 
-        acc = showAccounts("Select account:")
+        local acc = nil
         monitor.clear()
+        acc = showAccounts("Select account:")
+        
 
         while acc == nil do
+            monitor.clear()
             centerText("Please select someone.")
             sleep(1)
             acc = showAccounts("Select account:")
         end
 
+        monitor.clear()
         showBalance(acc)
     end
     if y == 3 then
