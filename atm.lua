@@ -171,6 +171,12 @@ local function numberInput(title)
             val = val..num
         end
     end
+
+    local ret = tonumber(val)
+    if ret == nil then
+        error("impossible")
+    end
+    return ret
 end
 
 local function doTransaction()
