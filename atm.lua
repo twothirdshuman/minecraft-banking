@@ -155,6 +155,7 @@ local function numberInput(title)
 
         if num == 10 then
             val = ""
+            onLineCenter("               ", 2)
         elseif num == 11 then
             val = val.."0"
         elseif num == 12 then
