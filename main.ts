@@ -266,10 +266,22 @@ async function createAccount(req: Request): Promise<Response> {
     return new Response("Account created successfully");
 }
 
-Deno.serve(async (req, info) => {
-    console.log(req.headers);
-    console.log(info.remoteAddr.hostname);
+function isIPv6Address(hostname: string) {
+    // Regex for detecting a valid IPv6 address
+    const ipv6Pattern = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(::(?:[0-9a-fA-F]{1,4}:){1,7}[0-9a-fA-F]{1,4})$/;
+    
+    // Check if the hostname matches the IPv6 pattern or if it is in square brackets (URL format)
+    return ipv6Pattern.test(hostname) || (hostname.startsWith("[") && hostname.endsWith("]"));
+}
 
+Deno.serve(async (req, info) => {
+    if (!isIPv6Address(info.remoteAddr.hostname)) {
+        return new Response("Request must be ipv6", {status:400});
+    }
+
+    if (!info.remoteAddr.hostname.includes("2001:2043:dc01:4680")) {
+        return new Response("Invalid ip", {status:400});
+    }
 
     const url = new URL(req.url);
 
