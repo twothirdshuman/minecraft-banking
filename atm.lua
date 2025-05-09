@@ -75,7 +75,7 @@ local function showAccounts(title)
     local _, _, x, y = os.pullEvent("monitor_touch")
 
     print("y: "..y)
-    if (y - 1) > #accounts then
+    if (y - 1) <= #accounts then
         print(accounts[y - 1])
         return accounts[y - 1]
     end
