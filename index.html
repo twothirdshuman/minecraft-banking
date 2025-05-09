@@ -15,9 +15,11 @@
     <input placeholder="pin" type="password" id="pin">
     <input placeholder="name" id="name">
     <input placeholder="toAccountName" id="to">
+    <input placeholder="fromAccountName" id="from">
     <input placeholder="amount" id="amount">
     <button id="print">Print Money</button>
     <button id="create">Create Account</button>
+    <button id="transaction">Make transaction</button>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("print").addEventListener("click", async () => {
@@ -35,6 +37,16 @@
                 const name = document.getElementById("name").value;
 
                 const res = await fetch("https://minecraft-banking.deno.dev/api/createAccount", {method:"POST",body:JSON.stringify({name:name,pin:pin})});
+
+                alert(res.ok);
+            });
+
+            document.getElementById("transaction").addEventListener("click", async () => {
+                const to = document.getElementById("to").value;
+                const from = document.getElementById("from").value;
+                const amount = parseInt(document.getElementById("amount").value);
+
+                const res = await fetch("https://minecraft-banking.deno.dev/api/makeTransaction", {method:"POST",body:JSON.stringify({pin:"",toAccountName:to,fromAccountName:from,amount:amount})});
 
                 alert(res.ok);
             });
