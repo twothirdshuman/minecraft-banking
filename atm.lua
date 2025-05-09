@@ -120,7 +120,7 @@ local function numberInput(title)
     local bgLine = "fdddffdddffdddf"
     local fgLine = "000000000000000"
 
-    local startY = 6
+    local startY = 2
     monitor.setCursorPos(1, startY)
     emptyLine()
     monitor.setCursorPos(1, startY + 1)
