@@ -1,5 +1,6 @@
 local monitor = peripheral.find("monitor")
 monitor.setTextScale(0.5)
+monitor.clear()
 --- @type number, number
 local width, height = monitor.getSize()
 
@@ -43,13 +44,14 @@ local function selectAccount()
 end
 
 --- @param title string
-local function showAccounts(title) 
+local function showAccounts(title)
+    monitor.clear()
     monitor.setCursorPos(1, 1)
     monitor.write(title)
 
     local accounts = {}
     parallel.waitForAny(showLoading, function ()
-        local res = http.get("https://minecraft-banking.deno.dev/atm.lua")
+        local res = http.get("https://minecraft-banking.deno.dev/api/getAccounts")
         
         if res.getResponseCode() ~= 200 then
             local err = res.readAll()
