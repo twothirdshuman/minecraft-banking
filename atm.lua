@@ -94,7 +94,11 @@ local function main()
     if y == 1 then
         local acc = showAccounts("Select account:")
         monitor.clear()
-        centerText("selected: "..acc)
+        if acc == nil then
+            centerText("did not select anyone")
+        else
+            centerText("selected: "..acc)
+        end
         sleep(5)
     end
     if y == 3 then
