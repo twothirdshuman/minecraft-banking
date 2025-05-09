@@ -26,7 +26,7 @@ end
 
 local function waitForStart()
     monitor.clear()
-    centerText("Press anywhere to start")
+    centerText("To start right ".."click anywhere on the screen")
     local _, _, x, y = os.pullEvent("monitor_touch")
 end
 
