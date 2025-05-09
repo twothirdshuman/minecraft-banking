@@ -105,6 +105,7 @@ end
 
 ---@param title string
 local function numberInput(title)
+    monitor.clear()
     onLineCenter(title, 1)
 
     -- red - e 
@@ -138,7 +139,21 @@ local function numberInput(title)
     monitor.setCursorPos(1, startY + 7)
     monitor.blit(" clr   0   sbm ", "00000000000fff0", "feeeffdddff000f") -- width 15
 
-    local _, _, _, _ = os.pullEvent("monitor_touch")
+    while true do
+        local _, _, x, y = os.pullEvent("monitor_touch")
+        --     3  8  13 (+5)
+        -- 3 - 1, 2, 3
+        -- 5 - 4, 5, 6
+        -- 7 - 7, 8, 9
+        -- 9 - clr, 0, sbm
+
+        local num = ((x + 2) / 5) + (((y - 3) / 2) * 3)
+        print(num)
+
+        if num == 5 then
+            break
+        end
+    end
 end
 
 local function doTransaction()
