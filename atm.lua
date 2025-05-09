@@ -179,10 +179,58 @@ local function numberInput(title)
     return ret
 end
 
+---@param from string
+---@param to string
+---@param amount number
+local function makeTransaction(from, to, amount)
+    monitor.clear()
+    local response = {}
+    parallel.waitForAny(showLoading, function ()
+        local res = http.post("https://minecraft-banking.deno.dev/api/makeTransaction", textutils.serializeJSON({
+            fromAccountName = from,
+            toAccountName = to,
+            amount = amount,
+            pin = ""
+        }))
+        
+        if res.getResponseCode() ~= 200 then
+            local err = res.readAll()
+            print("Error occurred: "..err)
+            centerText("Error occurred: "..err)
+            sleep(10)
+            return
+        end
+
+        response = textutils.unserializeJSON(res.readAll())
+    end)
+
+    monitor.setCursorPos(1,1)
+    monitor.write("Payment done")
+    monitor.setCursorPos(1,2)
+    monitor.write("amount: $"..response["amount"])
+    monitor.setCursorPos(1,3)
+    monitor.write("from: "..response["fromAccountName"])
+    monitor.setCursorPos(1,4)
+    monitor.write("to: "..response["toAccountName"])
+    monitor.setCursorPos(1,5)
+    
+    monitor.write("id: "..string.sub(response["ulid"], 1, 11))
+    monitor.setCursorPos(1,6)
+    monitor.write(string.sub(response["ulid"], 12, #response["ulid"]))
+
+    local _, _, _, _ = os.pullEvent("monitor_touch")
+end
+
 local function doTransaction()
     local from = showAccounts("Who are you?")
+    if from == nil then
+        return
+    end
     local amount = numberInput("Input amount:")
     local to = showAccounts("To whom?")
+    if to == nil then
+        return
+    end
 
     monitor.clear()
     monitor.setCursorPos(1, 1)
@@ -202,11 +250,11 @@ local function doTransaction()
     end
 
     if (x == 2 or x == 3 or x == 4 ) then
-        error("AAA")
+        makeTransaction(from, to, amount)
     else 
         monitor.clear()
         centerText("payment stopped")
-        sleep(1)
+        sleep(5)
         return
     end
 end
