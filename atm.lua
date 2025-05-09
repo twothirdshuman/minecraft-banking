@@ -194,12 +194,14 @@ local function makeTransaction(from, to, amount)
             pin = ""
         }))
         
-        if failRes.getResponseCode() ~= 200 then
-            local err = failRes.readAll()
-            print("Error occurred: "..err)
-            centerText("Error occurred: "..err)
-            fail = true
-            return
+        if failRes ~= nil then
+            if failRes.getResponseCode() ~= 200 then
+                local err = failRes.readAll()
+                print("Error occurred: "..err)
+                centerText("Error occurred: "..err)
+                fail = true
+                return
+            end
         end
 
         response = textutils.unserializeJSON(res.readAll())
