@@ -185,8 +185,9 @@ end
 local function makeTransaction(from, to, amount)
     monitor.clear()
     local response = {}
+    local fail = false
     parallel.waitForAny(showLoading, function ()
-        local res, succ, failRes = http.post("https://minecraft-banking.deno.dev/api/makeTransaction", textutils.serializeJSON({
+        local res, _, failRes = http.post("https://minecraft-banking.deno.dev/api/makeTransaction", textutils.serializeJSON({
             fromAccountName = from,
             toAccountName = to,
             amount = amount,
@@ -197,12 +198,17 @@ local function makeTransaction(from, to, amount)
             local err = failRes.readAll()
             print("Error occurred: "..err)
             centerText("Error occurred: "..err)
-            sleep(10)
+            fail = true
             return
         end
 
         response = textutils.unserializeJSON(res.readAll())
     end)
+
+    if fail then
+        sleep(10)
+        return
+    end
 
     monitor.setCursorPos(1,1)
     monitor.write("Payment done")
