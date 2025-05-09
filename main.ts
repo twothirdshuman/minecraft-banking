@@ -266,9 +266,9 @@ async function createAccount(req: Request): Promise<Response> {
     return new Response("Account created successfully");
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req, info) => {
     console.log(req.headers);
-    console.log(req.conn);
+    console.log(String(info.remoteAddr));
 
 
     const url = new URL(req.url);
