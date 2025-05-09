@@ -104,6 +104,7 @@ end
 
 
 ---@param title string
+---@return number
 local function numberInput(title)
     monitor.clear()
     onLineCenter(title, 1)
@@ -159,7 +160,19 @@ local function numberInput(title)
         elseif num == 11 then
             val = val.."0"
         elseif num == 12 then
-            break
+            if val == "" then
+                for i=1,10 do
+                    monitor.setCursorPos(1, 2)
+                    monitor.blit("  Input number ", "000000000000000", "eeeeeeeeeeeeeee") 
+                    sleep(0.1)
+                    monitor.setCursorPos(1, 2)
+                    monitor.blit("  Input number ", "000000000000000", "fffffffffffffff") 
+                    sleep(0.1)
+                end
+                onLineCenter("               ", 2)
+            else
+                break
+            end
         else
             val = val..num
         end
