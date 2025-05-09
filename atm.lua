@@ -22,6 +22,8 @@ monitor.setCursorPos(1, 7)
 monitor.write("List accounts", colors.red)
 
 while true do
+    print("waiting")
     local _, _, x, y = os.pullEvent("monitor_touch")
     
+    break
 end
