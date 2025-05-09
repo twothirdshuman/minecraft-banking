@@ -150,7 +150,7 @@ local function numberInput(title)
         -- 9 - clr, 0, sbm
 
         local num = math.floor((x + 3) / 5) + (((y - 3) / 2) * 3)
-        --print(num)
+        print(num)
 
         if num == 10 then
             val = ""
