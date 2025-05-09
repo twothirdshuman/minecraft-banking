@@ -51,6 +51,7 @@ local function showBalance(accountName)
         balance = textutils.unserialiseJSON(res.readAll())["balance"]
     end)
 
+    monitor.clear()
     onLineCenter(accountName, 2)
     onLineCenter("balance: $"..balance, 3)
     local _, _, _, _ = os.pullEvent("monitor_touch")
