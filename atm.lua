@@ -149,7 +149,7 @@ local function numberInput(title)
         -- 7 - 7, 8, 9
         -- 9 - clr, 0, sbm
 
-        local num = math.floor((x + 2) / 5 + math.floor((y - 3) / 2) * 3)
+        local num = math.floor((x + 4) / 5 + math.floor((y - 3) / 2) * 3)
 
         print(num)
 
