@@ -267,6 +267,8 @@ async function createAccount(req: Request): Promise<Response> {
 }
 
 Deno.serve(async (req) => {
+    console.log(req.headers);
+
     const url = new URL(req.url);
 
     if (url.pathname === "/api/getAccounts" && req.method === "GET") {
