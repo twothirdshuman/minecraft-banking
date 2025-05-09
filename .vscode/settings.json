@@ -4,7 +4,9 @@
         "color",
         "colors",
         "http",
-        "sleep"
+        "sleep",
+        "parallel",
+        "textutils"
     ],
     "Lua.diagnostics.disable": [
         "undefined-field"

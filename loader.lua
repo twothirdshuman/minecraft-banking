@@ -30,18 +30,30 @@ local function waitForStart()
     local _, _, x, y = os.pullEvent("monitor_touch")
 end
 
+local function showLoading() 
+    local text = "Loading."
+    while true do
+        centerText(text)
+        text = text.."."
+        sleep(0.25)
+    end
+end
+
 local function loadAndExecute()
     monitor.clear()
-    centerText("Loading...")
-    local res = http.get("https://minecraft-banking.deno.dev/atm.lua")
+    local script = ""
+    parallel.waitForAny(showLoading, function ()
+        local res = http.get("https://minecraft-banking.deno.dev/atm.lua")
+        
+        if res.getResponseCode() ~= 200 then
+            local err = res.readAll()
+            print("Error occurred:"..err)
     
-    if res.getResponseCode() ~= 200 then
-        local err = res.readAll()
-        print("Error occurred:"..err)
+        end
+    
+        script = res.readAll()
+    end)
 
-    end
-
-    local script = res.readAll()
     local func, err = load(script, "atm")
     if err ~= nil then
         print("Error occurred: "..err)
