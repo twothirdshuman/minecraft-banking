@@ -53,7 +53,14 @@ local function showBalance(accountName)
 
     monitor.clear()
     onLineCenter(accountName, 2)
-    onLineCenter("balance: $"..balance, 3)
+    onLineCenter("balance:", 4)
+
+    local money = "$"..balance
+    if balance < 0 then
+        money = "-$"..(-balance)
+    end
+
+    onLineCenter(money, 5)
     local _, _, _, _ = os.pullEvent("monitor_touch")
 end
 
