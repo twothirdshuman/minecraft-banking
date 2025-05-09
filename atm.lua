@@ -149,7 +149,8 @@ local function numberInput(title)
         -- 7 - 7, 8, 9
         -- 9 - clr, 0, sbm
 
-        local num = math.floor((x + 3) / 5) + (((y - 3) / 2) * 3)
+        local num = math.floor((x + 3) / 5 + ((y - 3) / 2) * 3)
+
         print(num)
 
         if num == 10 then
