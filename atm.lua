@@ -194,7 +194,7 @@ local function doTransaction()
     onLineCenter("Are you sure?", 5)
 
     monitor.setCursorPos(1, 7)
-    monitor.blit(" YES        NO ", "fdddffffffffeef")
+    monitor.blit(" YES        NO ", "000000000000000", "fdddffffffffeef")
 
     local _, _, x, y = os.pullEvent("monitor_touch")
     while not (y == 7 and ((x == 2 or x == 3 or x == 4 ) or (x == 13 or x == 14))) do
