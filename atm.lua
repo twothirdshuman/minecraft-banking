@@ -109,12 +109,6 @@ local function numberInput(title)
     monitor.clear()
     onLineCenter(title, 1)
 
-    -- red - e 
-    -- white  - 0
-    -- green  - d
-    -- black - f
-
-
     local emptyLine = function ()
         monitor.blit("               ", "000000000000000", "fffffffffffffff")
     end
@@ -183,6 +177,32 @@ local function doTransaction()
     local from = showAccounts("Who are you?")
     local amount = numberInput("Input amount:")
     local to = showAccounts("To whom?")
+
+    monitor.clear()
+    monitor.setCursorPos(1, 1)
+    monitor.write("Send $"..amount)
+    monitor.setCursorPos(1, 2)
+    monitor.write("from: "..from)
+    monitor.setCursorPos(1, 3)
+    monitor.write("to: "..to)
+    onLineCenter("Are you sure?", 5)
+
+    monitor.setCursorPos(1, 7)
+    monitor.blit(" YES        NO ", "fdddffffffffeef")
+
+    local _, _, x, y = os.pullEvent("monitor_touch")
+    while not (y == 7 and ((x == 2 or x == 3 or x == 4 ) or (x == 13 or x == 14))) do
+        _, _, x, y = os.pullEvent("monitor_touch")
+    end
+
+    if (x == 2 or x == 3 or x == 4 ) then
+        error("AAA")
+    else 
+        monitor.clear()
+        centerText("payment stopped")
+        sleep(1)
+        return
+    end
 end
 
 local function main() 
