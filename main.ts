@@ -283,7 +283,7 @@ Deno.serve(async (req, info) => {
         return new Response("Request must be ipv6", {status:400});
     }
 
-    if (!info.remoteAddr.hostname.includes("2001:2043:dc01:4680")) {
+    if (!info.remoteAddr.hostname.startsWith("2001:2043:dc01:4680")) {
         return new Response("Invalid ip", {status:400});
     }
 
