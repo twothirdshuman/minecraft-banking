@@ -42,7 +42,7 @@ local function loadAndExecute()
     end
 
     local script = res.readAll()
-    local func, err = load(script)
+    local func, err = load(script, "atm")
     if err ~= nil then
         print("Error occurred: "..err)
         centerText("Error")

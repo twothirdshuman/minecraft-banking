@@ -13,7 +13,7 @@ local function selectAccount()
 end
 
 monitor.setCursorPos(1, 1)
-monitor.blit("Check balance", colors.green)
+monitor.write("Check balance", colors.green)
 monitor.setCursorPos(1, 3)
 monitor.write("Do transaction", colors.blue)
 monitor.setCursorPos(1, 5)
