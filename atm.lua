@@ -64,15 +64,6 @@ local function showBalance(accountName)
     local _, _, _, _ = os.pullEvent("monitor_touch")
 end
 
----@param title string
-local function numberInput(title)
-
-end
-
-local function selectAccount()
-    
-end
-
 --- @param title string
 --- @return string | nil
 local function showAccounts(title)
@@ -111,6 +102,51 @@ local function showAccounts(title)
     return nil
 end
 
+
+---@param title string
+local function numberInput(title)
+    onLineCenter(title, 1)
+
+    -- red - e 
+    -- white  - 0
+    -- green  - d
+    -- black - f
+
+
+    local emptyLine = function ()
+        monitor.blit("               ", "000000000000000", "fffffffffffffff")
+    end
+
+    local bgLine = "fdddffdddffdddf"
+    local fgLine = "000000000000000"
+
+    local startY = height - (4 * 3)
+    monitor.setCursorPos(1, startY)
+    emptyLine()
+    monitor.setCursorPos(1, startY + 1)
+    monitor.blit("  1    2    3  ", fgLine, bgLine) -- width 15
+    monitor.setCursorPos(1, startY + 2)
+    emptyLine()
+    monitor.setCursorPos(1, startY + 3)
+    monitor.blit("  4    5    6  ", fgLine, bgLine) -- width 15
+    monitor.setCursorPos(1, startY + 4)
+    emptyLine()
+    monitor.setCursorPos(1, startY + 5)
+    monitor.blit("  7    8    9  ", fgLine, bgLine) -- width 15
+    monitor.setCursorPos(1, startY + 6)
+    emptyLine()
+    monitor.setCursorPos(1, startY + 7)
+    monitor.blit("  clr    0    sbm  ", fgLine, bgLine) -- width 15
+
+    local _, _, _, _ = os.pullEvent("monitor_touch")
+end
+
+local function doTransaction()
+    local from = showAccounts("Who are you?")
+    local amount = numberInput("Input amount:")
+    local to = showAccounts("To whom?")
+end
+
 local function main() 
     monitor.setCursorPos(1, 1)
     monitor.write("Check balance", colors.green)
@@ -137,6 +173,9 @@ local function main()
 
         monitor.clear()
         showBalance(acc)
+    end
+    if y == 2 then
+        doTransaction()
     end
     if y == 3 then
         showAccounts("All accounts:")
