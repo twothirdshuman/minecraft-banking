@@ -2,7 +2,9 @@
     "Lua.diagnostics.globals": [
         "peripheral",
         "color",
-        "colors"
+        "colors",
+        "http",
+        "sleep"
     ],
     "Lua.diagnostics.disable": [
         "undefined-field"
