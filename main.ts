@@ -1,6 +1,8 @@
 import { ulid } from "jsr:@std/ulid";
 import { verify } from "jsr:@bronti/argon2";
 
+import { scriptEndpoint } from "./scriptLoader.ts";
+
 const BANK_PASS = "$argon2id$v=19$m=19456,t=2,p=1$fB8uj8Te2pFcDElGQWLp+Q$ZAguWvCgVvXpiQHdkURROX+rJ5O/SF/RbeEgIV+1iKg";
 
 // kv Key ["accounts", string] and ["transactions", string]
@@ -173,18 +175,20 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response("Wrong pin", {status:401});
     }
     
-    const result = await doTransaction({
+    const transaction = {
         fromAccountName: from,
         toAccountName: to,
         amount: amount,
         ulid: ulid()
-    });
+    }
+
+    const result = await doTransaction(transaction);
 
     if (result === "Fail") {
         return new Response(null, {status:500});
     }
 
-    return new Response("Successful transaction");
+    return new Response(JSON.stringify(transaction), {status:200,headers:{"Content-Type":"application/json"}});
 }
 
 async function printMoney(req: Request): Promise<Response> {
@@ -295,6 +299,8 @@ Deno.serve(async (req, info) => {
         return printMoney(req);
     } else if (url.pathname === "/api/createAccount" && req.method === "POST") {
         return createAccount(req);
+    } else if (url.pathname === "/atm.lua" && req.method === "GET") {
+        return scriptEndpoint();
     } else if(url.pathname === "/" && req.method === "GET") {
         return new Response(await Deno.readFile("./index.html"));
     }
