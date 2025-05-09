@@ -63,6 +63,9 @@ local function showAccounts(title)
         accounts = textutils.unserialiseJSON(res.readAll())
     end)
 
+    monitor.clear()
+    monitor.setCursorPos(1, 1)
+    monitor.write(title)
     for i=1,#accounts do
         monitor.setCursorPos(1, i + 1)
         monitor.write(accounts[i])
