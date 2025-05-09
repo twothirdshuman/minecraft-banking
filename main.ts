@@ -268,6 +268,8 @@ async function createAccount(req: Request): Promise<Response> {
 
 Deno.serve(async (req) => {
     console.log(req.headers);
+    console.log(req.conn);
+
 
     const url = new URL(req.url);
 
