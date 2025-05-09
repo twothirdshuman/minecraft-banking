@@ -136,7 +136,7 @@ local function numberInput(title)
     monitor.setCursorPos(1, startY + 6)
     emptyLine()
     monitor.setCursorPos(1, startY + 7)
-    monitor.blit("  clr    0    sbm  ", fgLine, bgLine) -- width 15
+    monitor.blit(" clr   0   sbm ", fgLine, bgLine) -- width 15
 
     local _, _, _, _ = os.pullEvent("monitor_touch")
 end
