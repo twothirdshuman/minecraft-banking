@@ -34,6 +34,28 @@ local function showLoading()
     end
 end
 
+--- @param accountName string
+local function showBalance(accountName)
+    local balance = nil
+    parallel.waitForAny(showLoading, function ()
+        local res = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..accountName)
+
+        if res.getResponseCode() ~= 200 then
+            local err = res.readAll()
+            print("Error occurred:"..err)
+            centerText("Error occurred:"..err)
+            sleep(10)
+            return
+        end
+
+        balance = textutils.unserialiseJSON(res.readAll())["balance"]
+    end)
+
+    onLineCenter(accountName, 2)
+    onLineCenter("balance: $"..balance, 3)
+    local _, _, _, _ = os.pullEvent("monitor_touch")
+end
+
 ---@param title string
 local function numberInput(title)
 
@@ -58,6 +80,7 @@ local function showAccounts(title)
             local err = res.readAll()
             print("Error occurred:"..err)
             centerText("Error occurred:"..err)
+            sleep(10)
             return
         end
     
@@ -74,12 +97,9 @@ local function showAccounts(title)
 
     local _, _, x, y = os.pullEvent("monitor_touch")
 
-    print("y: "..y)
     if (y - 1) <= #accounts then
-        print(accounts[y - 1])
         return accounts[y - 1]
     end
-    print("ere")
     return nil
 end
 
@@ -94,14 +114,18 @@ local function main()
     local _, _, x, y = os.pullEvent("monitor_touch")
     
     if y == 1 then
-        local acc = showAccounts("Select account:")
+
+        local acc = nil 
+        acc = showAccounts("Select account:")
         monitor.clear()
-        if acc == nil then
-            centerText("did not select anyone")
-        else
-            centerText("selected: "..acc)
+
+        while acc == nil do
+            centerText("Please select someone.")
+            sleep(1)
+            acc = showAccounts("Select account:")
         end
-        sleep(5)
+
+        showBalance(acc)
     end
     if y == 3 then
         showAccounts("All accounts:")
