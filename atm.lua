@@ -44,6 +44,7 @@ local function selectAccount()
 end
 
 --- @param title string
+--- @return string | nil
 local function showAccounts(title)
     monitor.clear()
     monitor.setCursorPos(1, 1)
@@ -72,24 +73,41 @@ local function showAccounts(title)
     end
 
     local _, _, x, y = os.pullEvent("monitor_touch")
+
+    if (y - 1) > #accounts then
+        return accounts[y - 1]
+    end
+
+    return nil
 end
 
-monitor.setCursorPos(1, 1)
-monitor.write("Check balance", colors.green)
-monitor.setCursorPos(1, 2)
-monitor.write("Do transaction", colors.blue)
-monitor.setCursorPos(1, 3)
-monitor.write("Create account", colors.yellow)
-monitor.setCursorPos(1, 4)
-monitor.write("List accounts", colors.red)
-
-
-
-
-local _, _, x, y = os.pullEvent("monitor_touch")
+local function main() 
+    monitor.setCursorPos(1, 1)
+    monitor.write("Check balance", colors.green)
+    monitor.setCursorPos(1, 2)
+    monitor.write("Do transaction", colors.blue)
+    monitor.setCursorPos(1, 3)
+    monitor.write("List accounts", colors.red)
     
-if y == 4 then
-    showAccounts("All accounts:")
+    local _, _, x, y = os.pullEvent("monitor_touch")
+    
+    if y == 1 then
+        local acc = showAccounts("Select account:")
+        monitor.clear()
+        centerText("selected: "..acc)
+        sleep(5)
+    end
+    if y == 3 then
+        showAccounts("All accounts:")
+    end
 end
 
+local status, err = pcall(main)
 
+if status == false then
+    print("error: "..err)
+    monitor.clear()
+
+    centerText("error: "..err)
+    local _, _, _, _ = os.pullEvent("monitor_touch")
+end
