@@ -139,7 +139,9 @@ local function numberInput(title)
     monitor.setCursorPos(1, startY + 7)
     monitor.blit(" clr   0   sbm ", "00000000000fff0", "feeeffdddff000f") -- width 15
 
+    local val = ""
     while true do
+        onLineCenter(val, 2)
         local _, _, x, y = os.pullEvent("monitor_touch")
         --     3  8  13 (+5)
         -- 3 - 1, 2, 3
@@ -147,11 +149,17 @@ local function numberInput(title)
         -- 7 - 7, 8, 9
         -- 9 - clr, 0, sbm
 
-        local num = ((x + 2) / 5) + (((y - 3) / 2) * 3)
-        print(num)
+        local num = math.floor((x + 3) / 5) + (((y - 3) / 2) * 3)
+        --print(num)
 
-        if num == 5 then
+        if num == 10 then
+            val = ""
+        elseif num == 11 then
+            val = val.."0"
+        elseif num == 12 then
             break
+        else
+            val = val..num
         end
     end
 end
