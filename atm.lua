@@ -4,6 +4,11 @@ monitor.clear()
 --- @type number, number
 local width, height = monitor.getSize()
 
+local function urlEncode(str)
+    local encode = string.gsub(str, " ", "%%20")
+    return encode
+end
+
 --- @param text string
 ---@param line number
 local function onLineCenter(text, line)
@@ -37,7 +42,7 @@ end
 local function showBalance(accountName)
     local balance = nil
     parallel.waitForAny(showLoading, function ()
-        local res, _, aaa = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..accountName)
+        local res, _, aaa = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..urlEncode(accountName))
 
         if res == nil then
             print(_)
