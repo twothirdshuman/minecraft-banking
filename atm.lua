@@ -7,7 +7,6 @@ local width, height = monitor.getSize()
 --- @param text string
 ---@param line number
 local function onLineCenter(text, line)
-    local halfLength = string.len(text)
     monitor.setCursorPos(math.floor(width / 2) - math.floor(string.len(text) / 2) + 1, line)
 
     monitor.write(text)
@@ -38,10 +37,10 @@ end
 local function showBalance(accountName)
     local balance = nil
     parallel.waitForAny(showLoading, function ()
-        local res = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..accountName)
+        local res, _, aaa = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..accountName)
 
-        if res.getResponseCode() ~= 200 then
-            local err = res.readAll()
+        if res == nil then
+            local err = aaa.readAll()
             print("Error occurred:"..err)
             centerText("Error occurred:"..err)
             sleep(10)

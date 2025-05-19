@@ -1,5 +1,6 @@
 local monitor = peripheral.find("monitor")
 monitor.setTextScale(0.5)
+monitor.clear()
 --- @type number, number
 local width, height = monitor.getSize()
 
@@ -32,38 +33,18 @@ local function showLoading()
     end
 end
 
-local function loadAndExecute()
-    monitor.clear()
-    local script = ""
-    parallel.waitForAny(showLoading, function ()
-        local res = http.get("https://minecraft-banking.deno.dev/atm.lua")
-        
-        if res.getResponseCode() ~= 200 then
-            local err = res.readAll()
-            print("Error occurred:"..err)
     
-        end
-    
-        script = res.readAll()
-    end)
+local function useState(state)
 
-    local func, err = load(script, "atm")
-    if err ~= nil then
-        print("Error occurred: "..err)
-        centerText("Error")
-        sleep(5)
-        return
-    end
-
-    if func == nil then
-        print("could not load func")
-        centerText("could not load func")
-        sleep(5)
-        return
-    end
-    func()
 end
 
-while true do
-    loadAndExecute()
+---@param component function
+local function mount(component) 
+
 end
+
+return {
+    showLoading = showLoading,
+    centerText = centerText,
+    onLineCenter = onLineCenter
+}
