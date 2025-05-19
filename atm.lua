@@ -40,6 +40,7 @@ local function showBalance(accountName)
         local res, _, aaa = http.get("https://minecraft-banking.deno.dev/api/getBalance?account="..accountName)
 
         if res == nil then
+            print(_)
             local err = aaa.readAll()
             print("Error occurred:"..err)
             centerText("Error occurred:"..err)
