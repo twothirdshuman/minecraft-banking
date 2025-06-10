@@ -279,13 +279,17 @@ function isIPv6Address(hostname: string) {
 }
 
 Deno.serve(async (req, info) => {
-    if (!isIPv6Address(info.remoteAddr.hostname)) {
-        return new Response("Request must be ipv6", {status:400});
+
+    if (req.headers.get("MinecraftBanking-Secret-Pass") !== "my-name-is-cool") {
+        if (!isIPv6Address(info.remoteAddr.hostname)) {
+            return new Response("Request must be ipv6", {status:400});
+        }
+    
+        if (!info.remoteAddr.hostname.startsWith("2001:2043:dc01:4680")) {
+            return new Response("Invalid ip", {status:400});
+        }
     }
 
-    if (!info.remoteAddr.hostname.startsWith("2001:2043:dc01:4680")) {
-        return new Response("Invalid ip", {status:400});
-    }
 
     const url = new URL(req.url);
 
