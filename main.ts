@@ -167,10 +167,6 @@ async function makeTransaction(req: Request): Promise<Response> {
         return new Response("Invalid amount", {status:400});
     }
 
-    if (from === to) {
-        return new Response("cannot transfer to self", {status:400});
-    }
-
     if (account.pin !== pin) {
         return new Response("Wrong pin", {status:401});
     }
