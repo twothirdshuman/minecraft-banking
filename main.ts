@@ -115,11 +115,12 @@ async function doTransaction(trans: Transaction): Promise<"Success" | "Fail"> {
         return "Fail";
     }
 
-    const atomic = kv.atomic()
+    const addTransaction = kv.atomic()
         .check(fromRes)
         .check(toRes)
         .set(["transactions", trans.ulid], trans)
-        .set(["accounts", trans.fromAccountName], {
+
+    let atomic = addTransaction.set(["accounts", trans.fromAccountName], {
             ...fromRes.value,
             balance: fromRes.value.balance - trans.amount
         })
@@ -127,6 +128,10 @@ async function doTransaction(trans: Transaction): Promise<"Success" | "Fail"> {
             ...toRes.value,
             balance: toRes.value.balance + trans.amount
         });
+    
+    if (trans.toAccountName === trans.fromAccountName) {
+        atomic = addTransaction;
+    }
 
     const commit = await atomic.commit();
     
