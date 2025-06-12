@@ -120,7 +120,12 @@ async function doTransaction(trans: Transaction): Promise<"Success" | "Fail"> {
         .check(toRes)
         .set(["transactions", trans.ulid], trans)
 
-    let atomic = addTransaction.set(["accounts", trans.fromAccountName], {
+    let atomic;
+    
+    if (trans.toAccountName === trans.fromAccountName) {
+        atomic = addTransaction;
+    } else {
+        atomic = addTransaction.set(["accounts", trans.fromAccountName], {
             ...fromRes.value,
             balance: fromRes.value.balance - trans.amount
         })
@@ -128,9 +133,6 @@ async function doTransaction(trans: Transaction): Promise<"Success" | "Fail"> {
             ...toRes.value,
             balance: toRes.value.balance + trans.amount
         });
-    
-    if (trans.toAccountName === trans.fromAccountName) {
-        atomic = addTransaction;
     }
 
     const commit = await atomic.commit();
